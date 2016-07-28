@@ -39,45 +39,21 @@ public class ExcelToJson {
 		sortStrings();
 	}
 
+	/**
+	 * 对字符串进行排序，方便绘制的时候归类
+	 */
 	public void sortStrings() {
 		Collections.sort(lStrings);
-		for (String string : lStrings) {
-		}
-		createJSON();
+		JsonUtils.write(getChildren(0, lStrings.size(), 0).toString(), OUTPUT_PATH);
 	}
-
-	public void createJSON() {
-		int nColumnLength = lStrings.get(0).split(HYPHEN).length;
-		JSONArray jArray = new JSONArray();
-		JSONObject jObj = new JSONObject();
-
-		String strNewName = "";
-		String[] strArray;
-		int nColumnCurrentIndex = 0;
-		int nLastRowIndex = 0;
-		boolean bIsStart = false;
-		for (int i = 0; i < lStrings.size(); i++) {
-			strArray = lStrings.get(i).split(HYPHEN);
-			if (!strArray[nColumnCurrentIndex].equals(strNewName)) {
-				if (bIsStart) {
-					jObj.put("name", strNewName);
-					jObj.put("children", getChildren(nLastRowIndex, i, nColumnCurrentIndex + 1));
-					jArray.put(jObj);
-				}
-				bIsStart = true;
-				strNewName = strArray[nColumnCurrentIndex];
-				nLastRowIndex = i;
-				jObj = new JSONObject();
-			}
-		}
-		jObj.put("name", strNewName);
-		jObj.put("children", getChildren(nLastRowIndex, lStrings.size(), nColumnCurrentIndex + 1));
-		jArray.put(jObj);
-
-		System.out.println(jArray.toString());
-		JsonUtils.write(jArray.toString(), OUTPUT_PATH);
-	}
-
+	
+	/**
+	 * 递归调用，嵌套生成json
+	 * @param nStartRowIndex 开始位置
+	 * @param nEndRowIndex 结束位置
+	 * @param nColumnCurrentIndex 当前第几个column
+	 * @return JSONArray 直接可以被d3读取的json字符串
+	 */
 	public JSONArray getChildren(int nStartRowIndex, int nEndRowIndex, int nColumnCurrentIndex) {
 		int nColumnLength = lStrings.get(0).split(HYPHEN).length;
 
@@ -96,7 +72,7 @@ public class ExcelToJson {
 					if (nColumnCurrentIndex < nColumnLength - 1) {
 						jObj.put("children", getChildren(nLastRowIndex, i, nColumnCurrentIndex + 1));
 					} else {
-						jObj.put("colour", getRandColorCode());
+						jObj.put("colour", getGradualChangeColorCode());
 
 					}
 					jArray.put(jObj);
@@ -111,7 +87,7 @@ public class ExcelToJson {
 		if (nColumnCurrentIndex < nColumnLength - 1) {
 			jObj.put("children", getChildren(nLastRowIndex, nEndRowIndex, nColumnCurrentIndex + 1));
 		} else {
-			jObj.put("colour", getRandColorCode());
+			jObj.put("colour", getGradualChangeColorCode());
 
 		}
 		jArray.put(jObj);
@@ -140,15 +116,13 @@ public class ExcelToJson {
 	/**
 	 * 获取十六进制的渐变颜色代码.例如 "#6E36B4" , For HTML ,
 	 * 
-	 * @return
+	 * @return String
 	 */
 	private int nColorIndex = 0;
 
 	public String getGradualChangeColorCode() {
-		int oldR = 50, oldG = 100, oldB = 250;
-		int newR = 250, newG = 100, newB = 50;
-		Color oldColor = new Color(oldR, oldG, oldB); // 初始颜色
-		Color newColor = new Color(newR, newG, newB); // 结束颜色
+		Color oldColor = new Color(255, 10, 10); // 初始颜色
+		Color newColor = new Color(253, 245, 230); // 结束颜色
 
 		int step = lStrings.size() - 1; // 分多少步完成
 		int or = oldColor.getRed() + (newColor.getRed() - oldColor.getRed()) * nColorIndex / step;

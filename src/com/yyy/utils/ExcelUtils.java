@@ -29,6 +29,18 @@ public class ExcelUtils {
 		return wb;
 	}
 
+	public static Sheet getSheet(String fileName, int nSheetIndex) throws IOException {
+		Workbook wb = parseFileName(fileName);
+		Sheet sheet = wb.getSheetAt(nSheetIndex);
+		return sheet;
+	}
+
+	public static Row getRow(String fileName, int nSheetIndex, int nRowIndex) throws IOException {
+		Workbook wb = parseFileName(fileName);
+		Sheet sheet = wb.getSheetAt(nSheetIndex);
+		return sheet.getRow(nRowIndex);
+	}
+
 	public static List<Row> getRows(String fileName, int nSheetIndex) throws IOException {
 		Workbook wb = parseFileName(fileName);
 		List<Row> lRows = new ArrayList<>();

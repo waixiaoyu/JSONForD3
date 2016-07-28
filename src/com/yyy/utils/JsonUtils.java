@@ -1,6 +1,5 @@
 package com.yyy.utils;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -8,7 +7,6 @@ import java.io.PrintWriter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 public class JsonUtils {
 	public static void main(String[] args) {
@@ -30,9 +28,6 @@ public class JsonUtils {
 		System.out.println(a1.toString());
 	}
 
-	public static void addKeyValue() {
-
-	}
 
 	public static void write(String jsonString, String filePath) {
 		try {
